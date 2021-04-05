@@ -13,5 +13,16 @@ namespace Whatsdown_Friend_Service.Models
         public string ActionUserID;
         public string Status;
 
+        public Relationship()
+        {
+        }
+
+        public Relationship(string userOneID, string userTwoID, string actionUserID, string status)
+        {
+            UserOneID = userOneID;
+            UserTwoID = userTwoID;
+            ActionUserID = actionUserID;
+            Status = status;
+        }
     }
 }
