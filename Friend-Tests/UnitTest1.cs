@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Whatsdown_Friend_Service;
 using Whatsdown_Friend_Service.Data;
+using Whatsdown_Friend_Service.Exceptions;
 using Whatsdown_Friend_Service.Models;
 using Xunit;
 using Xunit.Abstractions;
@@ -121,7 +122,6 @@ namespace Friend_Tests
 
         [Theory(DisplayName = "Succesfull Request a friendship")]
         [InlineData("1","2", 2)]
-        [InlineData("1", "3", 1)]
         public void Create_Friend_Request(string UserOneID, string UserTwoID, int expectedAmount)
         {
             using (var context = new FriendContext(options))
@@ -148,28 +148,157 @@ namespace Friend_Tests
               
             }
         }
-        [Theory(DisplayName = "Fail to Request a friendship")]
-        [InlineData("1", "2", true)]
-        public void Fail_Friend_Request(string UserOneID, string UserTwoID, bool expected)
+      
+        [Fact(DisplayName = "Fail to Request a friendship")]
+        public void Friend_Request_Already_Exist_Throw_Exception()
         {
+            string userOneID = "1";
+            string userTwoID = "2";
             using (var context = new FriendContext(options))
             {
-                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), "1", "2", "1", "PENDING");
+                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), userOneID, userTwoID, userOneID, "PENDING");
                 context.Relationships.Add(relationship);
                 context.SaveChanges();
             }
 
             using (var context = new FriendContext(options))
             {
-                bool actual = false;
+                RelationshipLogic logic = new RelationshipLogic(context);
 
+                Exception ex = Assert.Throws<RequestAlreadyExistException>(() => logic.RequestFriend(userOneID, userTwoID));
 
+                context.Dispose();
+                Assert.Equal("Invalid friend request. It already exists with the users:1 and 2", ex.Message);
 
-
-
-                Assert.Equal(actual, expected);
             }
         }
 
+
+        [Theory(DisplayName = "Throw argumant exception with  null arguments")]
+        [InlineData(null, "2")]
+        [InlineData("1", null)]
+        public void Friend_Null_Arguments_Throw_Exception(string userOneID, string userTwoID)
+        {
+            using (var context = new FriendContext(options))
+            {
+                RelationshipLogic logic = new RelationshipLogic(context);
+
+                Exception ex = Assert.Throws<ArgumentNullException>(() => logic.RequestFriend(userOneID, userTwoID));
+
+                context.Dispose();
+                Assert.Equal("Value cannot be null.", ex.Message);
+
+            }
+        }
+
+        [Theory(DisplayName = "Throw argumant exception with  empty arguments")]
+        [InlineData("", "2")]
+        [InlineData("1", "")]
+        [InlineData("", "")]
+        public void Friend_Empty_Arguments_Throw_Exception(string userOneID, string userTwoID)
+        {
+            using (var context = new FriendContext(options))
+            {
+                RelationshipLogic logic = new RelationshipLogic(context);
+
+                Exception ex = Assert.Throws<ArgumentException>(() => logic.RequestFriend(userOneID, userTwoID));
+
+                context.Dispose();
+                Assert.Equal("Value does not fall within the expected range.", ex.Message);
+
+            }
+        }
+
+     
+
+        [Fact(DisplayName = "Accept friend request throws exception")]
+        public void Accept_Friend_Request()
+        {
+            string userOneID = "1";
+            string userTwoID = "2";
+
+            using (var context = new FriendContext(options))
+            {
+                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), userOneID, userTwoID, userTwoID, "PENDING");
+                context.Relationships.Add(relationship);
+                context.SaveChanges();
+            }
+
+            using (var context = new FriendContext(options))
+            {
+                RelationshipLogic logic = new RelationshipLogic(context);
+
+                logic.AcceptFriend(userOneID, userTwoID);
+
+                Relationship rel = logic.GetFriend(userOneID, userTwoID);
+
+                Assert.Equal("ACCEPTED", rel.Status);
+                context.Dispose();
+
+            }
+        }
+        [Fact(DisplayName = "Refuse Accept Request cuz it does not exist")]
+        public void Accept_Friend_Request_Throw_Exception()
+        {
+
+            using (var context = new FriendContext(options))
+            {
+                string userOneID = "1";
+                string userTwoID = "2";
+                RelationshipLogic logic = new RelationshipLogic(context);
+
+                Exception ex = Assert.Throws<RequestDoesNotExistException>(() => logic.AcceptFriend(userOneID, userTwoID));
+
+                context.Dispose();
+                Assert.Equal("Friend request does not exist", ex.Message);
+
+            }
+        }
+
+
+        [Fact(DisplayName = "Deny friend request throws exception")]
+        public void Deny_Friend_Request()
+        {
+            string userOneID = "1";
+            string userTwoID = "2";
+
+            using (var context = new FriendContext(options))
+            {
+                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), userOneID, userTwoID, userTwoID, "PENDING");
+                context.Relationships.Add(relationship);
+                context.SaveChanges();
+            }
+
+            using (var context = new FriendContext(options))
+            {
+                RelationshipLogic logic = new RelationshipLogic(context);
+
+                logic.DenyFriend(userOneID, userTwoID);
+
+                Relationship rel = logic.GetFriend(userOneID, userTwoID);
+
+                Assert.Equal("DENIED", rel.Status);
+                context.Dispose();
+
+            }
+        }
+
+        [Fact(DisplayName = "Refuse Deny Request cuz it does not exist")]
+        public void Deny_Friend_Request_Throw_Exception()
+        {
+
+            using (var context = new FriendContext(options))
+            {
+                string userOneID = "1";
+                string userTwoID = "2";
+                RelationshipLogic logic = new RelationshipLogic(context);
+
+                Exception ex = Assert.Throws<RequestDoesNotExistException>(() => logic.DenyFriend(userOneID, userTwoID));
+
+                context.Dispose();
+                Assert.Equal("Friend request does not exist", ex.Message);
+
+            }
+        }
     }
 }

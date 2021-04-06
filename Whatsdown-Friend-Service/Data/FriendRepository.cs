@@ -40,5 +40,11 @@ namespace Whatsdown_Friend_Service
             return relationships;
         }
 
+        public void Update(Relationship rel)
+        {
+            Relationship relationToUpdate  = friendContext.Relationships.Where(c => c.ID == rel.ID).FirstOrDefault();
+            friendContext.Entry(relationToUpdate).CurrentValues.SetValues(rel);
+        }
+
     }
 }
