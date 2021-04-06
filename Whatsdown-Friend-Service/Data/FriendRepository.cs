@@ -18,13 +18,14 @@ namespace Whatsdown_Friend_Service
         }
         public void SaveRelationship(Relationship request)
         {
-            friendContext.Relationships.Add(request);
+                friendContext.Relationships.Add(request);
+                friendContext.SaveChanges();
         }
 
         public Relationship GetRelationship(string userOneID, string userTwoID)
         {
-           Relationship relationship = friendContext.Relationships.Where(c => c.UserOneID == userOneID || c.UserTwoID == userOneID).Where(c => c.UserOneID == userTwoID || c.UserTwoID == userTwoID).FirstOrDefault();
-            return relationship;
+           List<Relationship> relationship = friendContext.Relationships.Where(c => c.UserOneID == userOneID || c.UserTwoID == userOneID).Where(c => c.UserOneID == userTwoID || c.UserTwoID == userTwoID).ToList();
+            return relationship.FirstOrDefault();
         }
 
         public List<Relationship> GetAllRelationshipsFromOneUser(string userOneID)

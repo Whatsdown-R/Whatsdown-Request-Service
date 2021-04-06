@@ -18,13 +18,14 @@ namespace Whatsdown_Friend_Service
         public void RequestFriend(string SenderID, string receiverID )
         {
             Relationship relation = friendRepository.GetRelationship(SenderID, receiverID);
-            
+
             //Create Exception
             if (relation != null)
                 return;
 
-            relation = new Relationship(SenderID, receiverID, SenderID, "PENDING");
+            relation = new Relationship(Guid.NewGuid().ToString(),SenderID, receiverID, SenderID, "PENDING");
             friendRepository.SaveRelationship(relation);
+          
 
         }
 
@@ -38,7 +39,8 @@ namespace Whatsdown_Friend_Service
             if (relation.ActionUserID != actionUserID)
                 return;
 
-            relation.Status = "ACCEPTED";
+            Relationship newRelation = new Relationship(relation.ID, relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "ACCEPTED");
+            
 
             friendRepository.SaveRelationship(relation);
         }
@@ -56,9 +58,9 @@ namespace Whatsdown_Friend_Service
             if (relation.Status != "PENDING")
                 return;
 
-            relation.Status = "DENIED";
+            Relationship newRelation = new Relationship(relation.ID, relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "DENIED");
 
-            friendRepository.SaveRelationship(relation);
+            friendRepository.SaveRelationship(newRelation);
         }
 
         public void BlockFriend(string userID, string actionUserID)
@@ -68,7 +70,8 @@ namespace Whatsdown_Friend_Service
             if (relation == null)
                 return;
 
-            relation.Status = "BLOCKED";
+            Relationship newRelation = new Relationship(relation.ID, relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "BLOCKED");
+          
 
             friendRepository.SaveRelationship(relation);
         }
@@ -82,6 +85,11 @@ namespace Whatsdown_Friend_Service
         {
             List<Relationship> relationships = friendRepository.GetAllPendingRelationships(userID);
             return relationships;
+        }
+
+        public Relationship GetFriend(string userID, string otherUserID)
+        {
+            return friendRepository.GetRelationship(userID, otherUserID);
         }
     }
 }
