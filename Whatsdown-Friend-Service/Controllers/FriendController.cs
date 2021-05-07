@@ -3,53 +3,102 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Whatsdown_Friend_Service.Data;
+using Whatsdown_Friend_Service.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Whatsdown_Friend_Service.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/friends")]
     [ApiController]
     public class FriendController : ControllerBase
     {
-        // GET: api/<FriendController>
-        [HttpGet]
-        public IEnumerable<string> GetFriends()
+        RelationshipLogic friendlogic;
+        public FriendController(FriendContext _context)
         {
-            return new string[] { "value1", "value2" };
+            this.friendlogic = new RelationshipLogic(_context);
         }
 
-    
-        // POST api/<FriendController>
+
+        //Change view to safer
+        [HttpGet, Route("single")]
+        public IActionResult GetFriend(string userId, string friendId)
+        {
+           Relationship relationship = friendlogic.GetFriend(userId, friendId);
+            return Ok(new { friend = relationship });
+        }
+
         [HttpPost]
-        public void SendFriendRequest(string value)
+        public IActionResult SendFriendRequest(string userId, string friendId)
         {
+            try
+            {
+                friendlogic.RequestFriend(userId, friendId);
+                return Ok();
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return BadRequest();
+        }
+
+        [HttpPut, Route("accept")]
+        public IActionResult AcceptFriendRequest(string userId, string friendId)
+        {
+            try
+            {
+                friendlogic.AcceptFriend(userId, friendId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return BadRequest();
         }
 
         [HttpGet]
-        public IEnumerable<string> GetPendingFriendRequests()
+        public IActionResult GetPendingFriendRequests(string userId)
         {
-            return new string[] { "value1", "value2" };
+            List<Relationship> relationships = friendlogic.GetPendingFriends(userId);
+            return Ok(new { relationships = relationships });
         }
 
-        [HttpPut]
-        public IEnumerable<string> DeclineFriendRequest()
+        [HttpPut, Route("decline")]
+        public IActionResult DeclineFriendRequest(string userID, string actionId)
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                friendlogic.DenyFriend(userID, actionId);
+                return Ok();
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return BadRequest();
+         
+           
         }
 
-        [HttpPut]
-        public IEnumerable<string> BlockFriendRequest()
+        [HttpPut, Route("block")]
+        public IActionResult BlockFriendRequest(string userID, string actionId)
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                friendlogic.BlockFriend(userID, actionId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return BadRequest();
         }
 
       
 
         // DELETE api/<FriendController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+      
     }
 }

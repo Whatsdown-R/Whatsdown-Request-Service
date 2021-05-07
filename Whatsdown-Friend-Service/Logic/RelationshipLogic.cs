@@ -77,7 +77,7 @@ namespace Whatsdown_Friend_Service
             Relationship relation = friendRepository.GetRelationship(userID, actionUserID);
 
             if (relation == null)
-                return;
+                throw new RequestDoesNotExistException();
 
             Relationship newRelation = new Relationship(relation.ID, relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "BLOCKED");
 
