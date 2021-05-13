@@ -56,7 +56,7 @@ namespace Whatsdown_Friend_Service.Logic
             {
                 Profile profile = profiles[i];
 
-                PotentialContactView contact = new PotentialContactView(profile.displayName, profile.UserID, profile.profileImage);
+                PotentialContactView contact = new PotentialContactView(profile.displayName, profile.profileId, profile.profileImage);
                 contacts.Add(contact);
             }
 

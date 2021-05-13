@@ -13,9 +13,20 @@ namespace Whatsdown_Friend_Service.Models
         public string UserTwoID { get; private set; }
         public string ActionUserID { get; private set; }
         public string Status { get; private set; }
+        public string IdentificationCode { get; private set; }
 
         public Relationship()
         {
+        }
+
+        public Relationship(string ID, string userOneID, string userTwoID, string actionUserID, string status, string identificationcode)
+        {
+            this.ID = ID;
+            UserOneID = userOneID;
+            UserTwoID = userTwoID;
+            ActionUserID = actionUserID;
+            Status = status;
+            this.IdentificationCode = identificationcode;
         }
 
         public Relationship(string ID, string userOneID, string userTwoID, string actionUserID, string status)
@@ -25,6 +36,7 @@ namespace Whatsdown_Friend_Service.Models
             UserTwoID = userTwoID;
             ActionUserID = actionUserID;
             Status = status;
+           
         }
         public override string ToString()
         {
