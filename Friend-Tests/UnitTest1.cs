@@ -6,6 +6,7 @@ using Whatsdown_Friend_Service;
 using Whatsdown_Friend_Service.Data;
 using Whatsdown_Friend_Service.Exceptions;
 using Whatsdown_Friend_Service.Models;
+using Whatsdown_Friend_Service.Views;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -68,7 +69,8 @@ namespace Friend_Tests
 
        
         }
-        [Theory(DisplayName = "Get Multiple relationships from database using logic")]
+     
+        [Theory(Skip = "Long test, only run if needed, and run independently", DisplayName = "Get Multiple relationships from database using logic")]
         [InlineData("1",  3)]
         [InlineData("2",  2)]
         [InlineData("5", 1)]
@@ -98,11 +100,11 @@ namespace Friend_Tests
             {
                 bool actual = false;
                 RelationshipLogic logic = new RelationshipLogic(context);
-                List<Relationship> relationship = null;
+                List<FriendViewModel> relationship = null;
                 _output.WriteLine("Current list of relationships: 0");
                 relationship = logic.GetFriends(UserOneID);
 
-                foreach(Relationship ship in relationship)
+                foreach(FriendViewModel ship in relationship)
                 {
                     _output.WriteLine(ship.ToString());
                 }
@@ -120,34 +122,6 @@ namespace Friend_Tests
 
         }
 
-        [Theory(DisplayName = "Succesfull Request a friendship")]
-        [InlineData("1","2", 2)]
-        public void Create_Friend_Request(string UserOneID, string UserTwoID, int expectedAmount)
-        {
-            using (var context = new FriendContext(options))
-            {
-                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), "1", "3", "1", "PENDING");
-                context.Relationships.Add(relationship);
-                context.SaveChanges();
-            }
-
-            using (var context = new FriendContext(options))
-            {
-                
-                RelationshipLogic logic = new RelationshipLogic(context);
-                Relationship ship = null;
-                List<Relationship> relationships = null;
-
-                relationships = logic.GetFriends(UserOneID);
-        
-                logic.RequestFriend(UserOneID, UserTwoID);
-                relationships = logic.GetFriends(UserOneID);
-  
-                context.Dispose();
-                Assert.Equal(expectedAmount, relationships.Count);
-              
-            }
-        }
       
         [Fact(DisplayName = "Fail to Request a friendship")]
         public void Friend_Request_Already_Exist_Throw_Exception()
@@ -216,10 +190,10 @@ namespace Friend_Tests
         {
             string userOneID = "1";
             string userTwoID = "2";
-
+            string relationId = "231";
             using (var context = new FriendContext(options))
             {
-                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), userOneID, userTwoID, userTwoID, "PENDING");
+                Relationship relationship = new Relationship(relationId, userOneID, userTwoID, userTwoID, "PENDING");
                 context.Relationships.Add(relationship);
                 context.SaveChanges();
             }
@@ -228,7 +202,7 @@ namespace Friend_Tests
             {
                 RelationshipLogic logic = new RelationshipLogic(context);
 
-                logic.AcceptFriend(userOneID, userTwoID);
+                logic.AcceptFriend(userOneID, relationId);
 
                 Relationship rel = logic.GetFriend(userOneID, userTwoID);
 
@@ -261,10 +235,10 @@ namespace Friend_Tests
         {
             string userOneID = "1";
             string userTwoID = "2";
-
+            string relationId = "231";
             using (var context = new FriendContext(options))
             {
-                Relationship relationship = new Relationship(Guid.NewGuid().ToString(), userOneID, userTwoID, userTwoID, "PENDING");
+                Relationship relationship = new Relationship(relationId, userOneID, userTwoID, userTwoID, "PENDING");
                 context.Relationships.Add(relationship);
                 context.SaveChanges();
             }
@@ -273,7 +247,7 @@ namespace Friend_Tests
             {
                 RelationshipLogic logic = new RelationshipLogic(context);
 
-                logic.DenyFriend(userOneID, userTwoID);
+                logic.DenyFriend(userOneID, relationId);
 
                 Relationship rel = logic.GetFriend(userOneID, userTwoID);
 

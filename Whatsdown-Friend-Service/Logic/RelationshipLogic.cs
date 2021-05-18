@@ -21,6 +21,12 @@ namespace Whatsdown_Friend_Service
             this.messageRepository = new MessageRepository(messageContext);
         }
 
+        public RelationshipLogic(FriendContext _context)
+        {
+            this.friendRepository = new FriendRepository(_context);
+            
+        }
+
         public void RequestFriend(string SenderID, string receiverID )
         {
 
