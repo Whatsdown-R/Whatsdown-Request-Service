@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Whatsdown_Friend_Service</RootNamespace>
     <UserSecretsId>1e983b8f-b976-4a97-8526-3f18ad2af7ef</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
