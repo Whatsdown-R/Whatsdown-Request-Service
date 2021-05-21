@@ -8,7 +8,7 @@ ENV PATH_WITH_SPACE="Whatsdown-Friend-Service"
 copy . ./
 # COPY *.sln .
 
-COPY "${PATH_WITH_SPACE}/*.csproj" "./${PATH_WITH_SPACE}"
+COPY "${PATH_WITH_SPACE}/*.csproj" "./${PATH_WITH_SPACE}/"
 RUN dotnet restore
 # copy everything else and build app
 COPY "${PATH_WITH_SPACE}/." "./${PATH_WITH_SPACE}/"
