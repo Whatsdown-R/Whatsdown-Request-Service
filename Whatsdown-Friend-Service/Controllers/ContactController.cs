@@ -35,7 +35,7 @@ namespace Whatsdown_Friend_Service.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest("Name needs to be at least 5 characters");
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

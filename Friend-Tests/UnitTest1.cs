@@ -52,25 +52,16 @@ namespace Friend_Tests
                 bool actual = false;
                 RelationshipLogic logic = new RelationshipLogic(context);
                 Relationship relationship = null;
-
                 relationship = logic.GetFriend(UserOneID, UserTwoID);
-               
-
-                
 
                 if (relationship != null) actual = true;
 
-
-
                 Assert.Equal(expected, actual);
                 context.Dispose();
-
-            }
-
-       
+            }     
         }
      
-        [Theory(Skip = "Long test, only run if needed, and run independently", DisplayName = "Get Multiple relationships from database using logic")]
+        [Theory(Skip = "Long test, only run if needed, and run independently", DisplayName = "Get Multiple relationships from database using controller")]
         [InlineData("1",  3)]
         [InlineData("2",  2)]
         [InlineData("5", 1)]

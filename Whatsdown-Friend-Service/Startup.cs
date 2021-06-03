@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Whatsdown_Friend_Service.Data;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace Whatsdown_Friend_Service
 {
@@ -32,6 +33,19 @@ namespace Whatsdown_Friend_Service
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
+            var authenticationProviderKey = "TestKey";
+
+            services.AddAuthentication()
+                .AddOAuth(authenticationProviderKey, x =>
+                {
+                    x.ClientId = Configuration["Provider:ClientId"];
+                    x.ClientSecret = Configuration["Provider:ClientSecret"];
+                    x.CallbackPath = new PathString("/callback");
+
+                    x.AuthorizationEndpoint = "https://api.provider.net/auth/code";
+                    x.TokenEndpoint = "https://api.provider.net/auth/token";
+                });
 
         }
 

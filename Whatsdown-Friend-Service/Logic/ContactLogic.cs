@@ -25,7 +25,10 @@ namespace Whatsdown_Friend_Service.Logic
         public List<PotentialContactView> GetProfilesByName(string name, string userId)
         {
             if (name.Length < 5)
-                throw new ArgumentException();
+                throw new ArgumentException("Name has to be at least 5 characters long");
+
+            if (name.Length > 35)
+                throw new ArgumentException("Name can be at most 35 characters long");
             List<string> userIds = new List<string>();
             List<Profile> profiles = this.contactRepository.GetContactsByName(name);
             List<Relationship> friends = this.friendRepository.GetAllRelationshipsFromOneUser(userId);
@@ -55,7 +58,6 @@ namespace Whatsdown_Friend_Service.Logic
             for (int i = 0; i < profiles.Count; i++)
             {
                 Profile profile = profiles[i];
-
                 PotentialContactView contact = new PotentialContactView(profile.displayName, profile.profileId, profile.profileImage);
                 contacts.Add(contact);
             }

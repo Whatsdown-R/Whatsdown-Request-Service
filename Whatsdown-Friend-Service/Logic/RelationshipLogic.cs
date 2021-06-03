@@ -57,15 +57,15 @@ namespace Whatsdown_Friend_Service
                 throw new RequestDoesNotExistException();
 
             if (relation.ActionUserID == userID)
-                return;
+                throw new RequestException("User who send request cant accept request");
 
             if (relation.UserOneID != userID && relation.UserTwoID != userID)
-                return;
-           
-            if (relation.Status != "PENDING")
-                return;
+                throw new RequestException("User who is not involved in request cant interact with it");
 
-            
+            if (relation.Status != "PENDING")
+                throw new RequestException("Request is not pending");
+
+
             Relationship newRelation = new Relationship(relation.ID, relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "ACCEPTED", Guid.NewGuid().ToString());
             
 
@@ -79,17 +79,15 @@ namespace Whatsdown_Friend_Service
             if (relation == null)
                 throw new RequestDoesNotExistException();
 
-            if (relation.ID != relationshipId)
-                return;
            
             if (relation.ActionUserID == profileId)
-                return;
+                throw new RequestException("User who send request cant deny request");
 
             if (relation.UserOneID != profileId && relation.UserTwoID != profileId)
-                return;
+                throw new RequestException("User who is not involved in request cant interact with it");
 
             if (relation.Status != "PENDING")
-                return;
+                throw new RequestException("Request is not pending");
 
             Relationship newRelation = new Relationship(relation.ID, relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "DENIED");
 
@@ -111,6 +109,15 @@ namespace Whatsdown_Friend_Service
 
         public List<FriendViewModel> GetFriends(string userID)
         {
+            if (userID == null )
+                throw new ArgumentNullException();
+
+            if (userID.Equals(""))
+                throw new ArgumentException("Argument may not be empty.");
+
+            if (friendRepository.GetProfileFromProfileId(userID) == null)
+                throw new UserException("User does not exist.");
+
             List<FriendViewModel> friendViews = new List<FriendViewModel>();
             List<Profile> friends;
             List<string> friendIds = new List<string>();

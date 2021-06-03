@@ -40,9 +40,9 @@ namespace Whatsdown_Friend_Service.Controllers
                 return Ok();
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+               return BadRequest(ex.Message);
             }
-            return BadRequest();
+         
         }
 
         [HttpPut, Route("accept")]
@@ -55,9 +55,9 @@ namespace Whatsdown_Friend_Service.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+         
         }
 
         [HttpGet(), Route("pending/{profileId}")]
@@ -70,8 +70,16 @@ namespace Whatsdown_Friend_Service.Controllers
         [HttpGet(), Route("{profileId}")]
         public IActionResult GetFriends(string profileId)
         {
-            List<FriendViewModel> friends = friendlogic.GetFriends(profileId);
-            return Ok(new { friends = friends });
+            try
+            {
+                List<FriendViewModel> friends = friendlogic.GetFriends(profileId);
+                return Ok(new { friends = friends });
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return Unauthorized();
+            }
+          
         }
 
         [HttpPut, Route("decline")]
@@ -83,9 +91,9 @@ namespace Whatsdown_Friend_Service.Controllers
                 return Ok();
             }catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+           
          
            
         }
@@ -100,9 +108,9 @@ namespace Whatsdown_Friend_Service.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
-            return BadRequest();
+            
         }
 
       
