@@ -61,57 +61,6 @@ namespace Friend_Tests
             }     
         }
      
-        [Theory(Skip = "Long test, only run if needed, and run independently", DisplayName = "Get Multiple relationships from database using controller")]
-        [InlineData("1",  3)]
-        [InlineData("2",  2)]
-        [InlineData("5", 1)]
-        [InlineData("3", 2)]
-        [InlineData("7", 0)]
-        public void GetUsersFromLogic(string UserOneID, int expectedAmountOfFriends)
-        {
-            using (var context = new FriendContext(options))
-            {
-                List<Relationship> relationships = new List<Relationship>();
-                Relationship relationship = new Relationship("ID1", "1", "2", "2", "PENDING");
-                relationships.Add(relationship);
-                relationship = new Relationship("ID2", "1", "3", "1", "PENDING");
-                relationships.Add(relationship);
-                relationship = new Relationship("ID3", "1", "5", "1", "PENDING");
-                relationships.Add(relationship);
-                relationship = new Relationship("ID4", "2", "3", "2", "PENDING");
-                relationships.Add(relationship);
-
-
-                context.Relationships.AddRange(relationships);
-                context.SaveChanges();
-  
-            }
-
-            using (var context = new FriendContext(options))
-            {
-                bool actual = false;
-                RelationshipLogic logic = new RelationshipLogic(context);
-                List<FriendViewModel> relationship = null;
-                _output.WriteLine("Current list of relationships: 0");
-                relationship = logic.GetFriends(UserOneID);
-
-                foreach(FriendViewModel ship in relationship)
-                {
-                    _output.WriteLine(ship.ToString());
-                }
-                if (relationship != null)
-                    _output.WriteLine("Current list of relationships: " + relationship.Count);
-                else
-                    _output.WriteLine("Current list of relationships: null");
-
-                 context.Dispose();
-                Assert.Equal(expectedAmountOfFriends, relationship.Count);
-               
-
-            }
-
-
-        }
 
       
         [Fact(DisplayName = "Fail to Request a friendship")]

@@ -60,15 +60,7 @@ namespace Whatsdown_Friend_Service
             friendContext.SaveChanges();
         }
 
-        public Profile GetProfileFromProfileId(string profileId)
-        {
-            return this.friendContext.Profiles.Where(c => c.profileId == profileId).FirstOrDefault();
-        }
-
-        public List<Profile> GetListOfProfilesFromListOfIds(List<string> ids)
-        {
-            return this.friendContext.Profiles.Where(l => ids.Any(id => id == l.profileId)).ToList();
-        }
+    
 
     }
 }

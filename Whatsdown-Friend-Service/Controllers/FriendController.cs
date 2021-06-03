@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Whatsdown_Friend_Service.Data;
-using Whatsdown_Friend_Service.Logic;
 using Whatsdown_Friend_Service.Models;
 using Whatsdown_Friend_Service.Views;
 
@@ -17,9 +16,9 @@ namespace Whatsdown_Friend_Service.Controllers
     public class FriendController : ControllerBase
     {
         RelationshipLogic friendlogic;
-        public FriendController(FriendContext _context, MessageContext _context2)
+        public FriendController(FriendContext _context)
         {
-            this.friendlogic = new RelationshipLogic(_context, _context2);
+            this.friendlogic = new RelationshipLogic(_context);
         }
 
 
@@ -72,8 +71,8 @@ namespace Whatsdown_Friend_Service.Controllers
         {
             try
             {
-                List<FriendViewModel> friends = friendlogic.GetFriends(profileId);
-                return Ok(new { friends = friends });
+                List<BasicFriendView> friends = friendlogic.GetFriends(profileId);
+                return Ok(new { friend = friends });
             }catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);

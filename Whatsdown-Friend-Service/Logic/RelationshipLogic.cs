@@ -13,13 +13,9 @@ namespace Whatsdown_Friend_Service
     public class RelationshipLogic
     {
         FriendRepository friendRepository;
-        MessageRepository messageRepository;
+        
 
-        public RelationshipLogic(FriendContext _context, MessageContext messageContext )
-        {
-            this.friendRepository = new FriendRepository(_context);
-            this.messageRepository = new MessageRepository(messageContext);
-        }
+    
 
         public RelationshipLogic(FriendContext _context)
         {
@@ -107,7 +103,7 @@ namespace Whatsdown_Friend_Service
             friendRepository.Update(newRelation);
         }
 
-        public List<FriendViewModel> GetFriends(string userID)
+        public List<BasicFriendView> GetFriends(string userID)
         {
             if (userID == null )
                 throw new ArgumentNullException();
@@ -115,57 +111,27 @@ namespace Whatsdown_Friend_Service
             if (userID.Equals(""))
                 throw new ArgumentException("Argument may not be empty.");
 
-            if (friendRepository.GetProfileFromProfileId(userID) == null)
-                throw new UserException("User does not exist.");
 
             List<FriendViewModel> friendViews = new List<FriendViewModel>();
             List<Profile> friends;
+            List<BasicFriendView> basicRelationInfo = new List<BasicFriendView>();
             List<string> friendIds = new List<string>();
             List<Relationship> relationships = friendRepository.GetAllAcceptedRelationshipsFromOneUser(userID);
             foreach (Relationship item in relationships)
             {
                 if (item.UserOneID == userID)
-                    friendIds.Add(item.UserTwoID);
-                else
-                    friendIds.Add(item.UserOneID);
-            }
-
-            friends = friendRepository.GetListOfProfilesFromListOfIds(friendIds);
-
-            foreach (Profile item in friends)
-            {
-                foreach (Relationship relationship in relationships)
                 {
-                    if (relationship.UserOneID == item.profileId || relationship.UserTwoID == item.profileId )
-                    {
-                        BasicMessageView view = messageRepository.GetMostRecentMessage(relationship.IdentificationCode);
-                        if (view.displayName != null)
-                        {
-                            string senderName = "";
-                            if (view.displayName == userID)
-                            {
-                                Profile profileFromMessage = friendRepository.GetProfileFromProfileId(view.displayName);
-                                senderName = profileFromMessage.displayName;
-                            }
-                            else
-                            {
-                                senderName = item.displayName;
-                            }
-                          
-                            friendViews.Add(new FriendViewModel(item.displayName, relationship.IdentificationCode, item.profileImage, view.message, view.date, senderName));
-                        }
-                        else
-                        {
-                            friendViews.Add(new FriendViewModel(item.displayName, relationship.IdentificationCode, item.profileImage, "", ""));
-                        }
-                       
-                        
-                        break;
-                    }
+                   
+                    basicRelationInfo.Add(new BasicFriendView(item.UserTwoID, item.IdentificationCode));
                 }
+                 
+                else
+                    basicRelationInfo.Add(new BasicFriendView(item.UserOneID, item.IdentificationCode));
             }
 
-            return friendViews;
+            return basicRelationInfo;
+          
+
         }
 
         public List<PendingRequestViewModel> GetPendingFriends(string userID)
@@ -175,8 +141,7 @@ namespace Whatsdown_Friend_Service
             for (int i = 0; i < relationships.Count; i++)
             {
                 Relationship relationship = relationships[i];
-                Profile user = friendRepository.GetProfileFromProfileId(relationship.ActionUserID);
-                pendingRequests.Add(new PendingRequestViewModel(user.displayName, user.profileImage, relationship.ID));
+                pendingRequests.Add(new PendingRequestViewModel(relationship.ActionUserID));
 
             }
             return pendingRequests;
