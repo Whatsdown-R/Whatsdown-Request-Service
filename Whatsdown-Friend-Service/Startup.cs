@@ -26,7 +26,7 @@ namespace Whatsdown_Friend_Service
             services.AddControllers();
 
             services.AddDbContext<FriendContext>(options =>
-            options.UseMySql(Configuration.GetConnectionString("MvcMovieContext")));
+            options.UseMySql(Configuration.GetConnectionString("MessageDB")));
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
