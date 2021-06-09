@@ -25,6 +25,7 @@ namespace Whatsdown_Friend_Service
 
         public void RequestFriend(string SenderID, string receiverID )
         {
+            Console.WriteLine("Requesting friend with Id:" + receiverID, " , the sender: " + SenderID);
 
             if (SenderID == null || receiverID == null)
                 throw new ArgumentNullException();
@@ -37,10 +38,14 @@ namespace Whatsdown_Friend_Service
 
             //Create Exception
             if (relation != null)
+            {
+                Console.WriteLine("Requesting friend with Id:" + receiverID, " , the sender: " + SenderID + "  ALREADY EXISTS");
                 throw new RequestAlreadyExistException(SenderID, receiverID);
-
+            
+            }
             relation = new Relationship(Guid.NewGuid().ToString(),SenderID, receiverID, SenderID, "PENDING");
             friendRepository.SaveRelationship(relation);
+            Console.WriteLine("Succesfully saved relation with relationId: " + relation.ID);
           
 
         }
