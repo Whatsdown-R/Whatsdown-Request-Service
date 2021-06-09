@@ -8,12 +8,13 @@ namespace Whatsdown_Friend_Service.Views
     public class PendingRequestViewModel
     {
         public string ProfileId { get; set; }
+        public string RelationId { get; set; }
 
 
-        public PendingRequestViewModel(string profileId)
+        public PendingRequestViewModel(string profileId, string relationId)
         {
             ProfileId = profileId;
-            
+            this.RelationId = relationId;
         }
 
         public PendingRequestViewModel()

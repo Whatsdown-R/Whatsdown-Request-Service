@@ -141,7 +141,7 @@ namespace Whatsdown_Friend_Service
             for (int i = 0; i < relationships.Count; i++)
             {
                 Relationship relationship = relationships[i];
-                pendingRequests.Add(new PendingRequestViewModel(relationship.ActionUserID));
+                pendingRequests.Add(new PendingRequestViewModel(relationship.ActionUserID, relationship.ID));
 
             }
             return pendingRequests;
