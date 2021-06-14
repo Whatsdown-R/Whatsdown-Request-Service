@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Whatsdown_Friend_Service.Data;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Whatsdown_Friend_Service
 {
@@ -43,6 +48,40 @@ namespace Whatsdown_Friend_Service
 
                     x.AuthorizationEndpoint = "https://api.provider.net/auth/code";
                     x.TokenEndpoint = "https://api.provider.net/auth/token";
+                });
+            services
+        .AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
+        })
+        .AddJwtBearer("Default", jwt =>
+        {
+            var secret = Configuration["JWTSecret"];
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(secret);
+
+            jwt.SaveToken = true;
+            jwt.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = false,
+                ValidateLifetime = true
+
+            };
+        });
+
+            services
+                .AddAuthorization(options =>
+                {
+                    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes("Default")
+                        .Build();
                 });
 
         }

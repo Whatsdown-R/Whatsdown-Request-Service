@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Whatsdown_Friend_Service.Data;
+using Whatsdown_Friend_Service.Exceptions;
 using Whatsdown_Friend_Service.Models;
 using Whatsdown_Friend_Service.Views;
 
@@ -33,12 +36,13 @@ namespace Whatsdown_Friend_Service.Controllers
             return Ok(new { friend = relationship });
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public IActionResult SendFriendRequest(FriendRequestViewModel model)
         {
             try
             {
-                friendlogic.RequestFriend(model.userId, model.friendId);
+                string id = User.FindFirstValue("id");
+                friendlogic.RequestFriend(id, model.friendId);
                 return Ok();
             }catch(Exception ex)
             {
@@ -47,35 +51,44 @@ namespace Whatsdown_Friend_Service.Controllers
          
         }
 
-        [HttpPut, Route("accept")]
+        [HttpPut, Route("accept"), Authorize()]
         public IActionResult AcceptFriendRequest(RequestAnswerView request)
         {
             try
             {
+                string id = User.FindFirstValue("id");
                 this.logger.LogDebug("Accepting following FriendRequest: " + request.RelationshipId);
-                friendlogic.AcceptFriend(request.ProfileId, request.RelationshipId);
+                friendlogic.AcceptFriend(id, request.RelationshipId);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+            if (ex is RequestDoesNotExistException || ex is RequestException)
+            {
+            return BadRequest(ex.Message);
+            }
+             return Unauthorized("Something went wrong");
             }
          
         }
 
-        [HttpGet(), Route("pending/{profileId}")]
-        public IActionResult GetPendingFriendRequests(string profileId)
+        [HttpGet(), Authorize, Route("pending")]
+        public IActionResult GetPendingFriendRequests()
         {
-            List<PendingRequestViewModel> relationships = friendlogic.GetPendingFriends(profileId);
+            string id = User.FindFirstValue("id");
+            logger.LogInformation("Getting pending friend requests form profileId: " + id);
+            List<PendingRequestViewModel> relationships = friendlogic.GetPendingFriends(id);
+            logger.LogInformation("Succesfully got pending requests from profileId: " + id);
             return Ok(new { PendingRequests = relationships });
         }
 
-        [HttpGet(), Route("{profileId}")]
-        public IActionResult GetFriends(string profileId)
+        [HttpGet(), Authorize()]
+        public IActionResult GetFriends()
         {
             try
             {
-                List<BasicFriendView> friends = friendlogic.GetFriends(profileId);
+                string id = User.FindFirstValue("id");
+                List<BasicFriendView> friends = friendlogic.GetFriends(id);
                 return Ok(new { friend = friends });
             }catch(Exception ex)
             {

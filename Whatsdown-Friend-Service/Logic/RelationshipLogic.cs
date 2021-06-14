@@ -14,9 +14,6 @@ namespace Whatsdown_Friend_Service
     {
         FriendRepository friendRepository;
         
-
-    
-
         public RelationshipLogic(FriendContext _context)
         {
             this.friendRepository = new FriendRepository(_context);
