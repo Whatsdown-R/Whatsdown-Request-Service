@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,11 @@ namespace Whatsdown_Friend_Service.Controllers
     [ApiController]
     public class FriendController : ControllerBase
     {
+        private readonly ILogger<FriendController> logger;
         RelationshipLogic friendlogic;
-        public FriendController(FriendContext _context)
+        public FriendController(FriendContext _context, ILogger<FriendController> logger)
         {
+            this.logger = logger;
             this.friendlogic = new RelationshipLogic(_context);
         }
 
@@ -49,6 +52,7 @@ namespace Whatsdown_Friend_Service.Controllers
         {
             try
             {
+                this.logger.LogDebug("Accepting following FriendRequest: " + request.RelationshipId);
                 friendlogic.AcceptFriend(request.ProfileId, request.RelationshipId);
                 return Ok();
             }
