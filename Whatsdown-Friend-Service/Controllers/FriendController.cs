@@ -134,12 +134,15 @@ namespace Whatsdown_Friend_Service.Controllers
         {
             try
             {
+          
                 string id = User.FindFirstValue("id");
+                logger.LogInformation("Personal token = " + id + " || FriendId: " + friendId);
                 friendlogic.RemoveFriend(id, friendId);
                 return Ok();
             }
             catch (Exception ex)
             {
+                logger.LogError(ex.Message);
                 return BadRequest(ex.Message);
             }
 

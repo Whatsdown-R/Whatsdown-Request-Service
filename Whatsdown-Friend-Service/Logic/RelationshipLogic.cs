@@ -107,6 +107,7 @@ namespace Whatsdown_Friend_Service
 
         public void RemoveFriend(string userId , string friendId)
         {
+            
             Relationship relation = friendRepository.GetRelationship(userId, friendId);
             if (relation == null)
                 throw new RequestDoesNotExistException();
