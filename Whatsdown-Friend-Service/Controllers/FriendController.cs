@@ -129,7 +129,7 @@ namespace Whatsdown_Friend_Service.Controllers
             
         }
 
-        [HttpPut, Route("remove"), Authorize]
+        [HttpPut, Route("remove/{friendId}"), Authorize]
         public IActionResult RemoveFriend(string friendId)
         {
             try
