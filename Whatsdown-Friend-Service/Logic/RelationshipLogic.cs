@@ -36,9 +36,11 @@ namespace Whatsdown_Friend_Service
             //Create Exception
             if (relation != null)
             {
-                Console.WriteLine("Requesting friend with Id:" + receiverID, " , the sender: " + SenderID + "  ALREADY EXISTS");
-                throw new RequestAlreadyExistException(SenderID, receiverID);
-            
+                if (relation.Status == "BLOCKED")
+                {
+                    Console.WriteLine("Requesting friend with Id:" + receiverID, " , the sender: " + SenderID + "  ALREADY EXISTS");
+                    throw new RequestAlreadyExistException(SenderID, receiverID);
+                }
             }
             relation = new Relationship(Guid.NewGuid().ToString(),SenderID, receiverID, SenderID, "PENDING");
             friendRepository.SaveRelationship(relation);
