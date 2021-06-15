@@ -111,17 +111,15 @@ namespace Whatsdown_Friend_Service.Controllers
             {
                 return BadRequest(ex.Message);
             }
-           
-         
-           
-        }
+      }
 
-        [HttpPut, Route("block")]
-        public IActionResult BlockFriendRequest(string userID, string actionId)
+        [HttpPut, Route("block"), Authorize]
+        public IActionResult BlockFriendRequest(string friendId)
         {
             try
             {
-                friendlogic.BlockFriend(userID, actionId);
+                string id = User.FindFirstValue("id");
+                friendlogic.BlockFriend(id, friendId);
                 return Ok();
             }
             catch (Exception ex)
@@ -131,9 +129,25 @@ namespace Whatsdown_Friend_Service.Controllers
             
         }
 
-      
+        [HttpPut, Route("remove"), Authorize]
+        public IActionResult RemoveFriend(string friendId)
+        {
+            try
+            {
+                string id = User.FindFirstValue("id");
+                friendlogic.RemoveFriend(id, friendId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
 
         // DELETE api/<FriendController>/5
-      
+
     }
 }
