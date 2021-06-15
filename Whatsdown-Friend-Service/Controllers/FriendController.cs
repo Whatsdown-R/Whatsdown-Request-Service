@@ -87,8 +87,10 @@ namespace Whatsdown_Friend_Service.Controllers
         {
             try
             {
+                logger.LogInformation("Getting friends");
                 string id = User.FindFirstValue("id");
                 List<BasicFriendView> friends = friendlogic.GetFriends(id);
+                logger.LogInformation("Amount of friends gotten: " + friends.Count);
                 return Ok(new { friend = friends });
             }catch(Exception ex)
             {
