@@ -111,8 +111,6 @@ namespace Whatsdown_Friend_Service
         {
             
             Relationship relation = friendRepository.GetRelationship(userId, friendId);
-            if (relation == null)
-                throw new RequestDoesNotExistException();
             friendRepository.Remove(relation);
         }
 

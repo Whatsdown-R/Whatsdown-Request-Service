@@ -62,7 +62,7 @@ namespace Whatsdown_Friend_Service
 
         public void Remove(Relationship rel)
         {
-            friendContext.Remove(rel);
+            friendContext.Relationships.Remove(rel);
             friendContext.SaveChanges();
         }
 

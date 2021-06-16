@@ -20,8 +20,5 @@ namespace Whatsdown_Friend_Service.Data
         }
 
         public DbSet<Relationship> Relationships { get; set; }
-        public DbSet<Profile> Profiles { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Message> Messages { get; set; }
     }
 }
