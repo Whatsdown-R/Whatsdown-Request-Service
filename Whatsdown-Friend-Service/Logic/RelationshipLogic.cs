@@ -113,8 +113,7 @@ namespace Whatsdown_Friend_Service
             Relationship relation = friendRepository.GetRelationship(userId, friendId);
             if (relation == null)
                 throw new RequestDoesNotExistException();
-            Relationship newRelation = new Relationship(relation.ID,relation.UserOneID, relation.UserTwoID, relation.ActionUserID, "DENIED");
-            friendRepository.Update(newRelation);
+            friendRepository.Remove(relation);
         }
 
         public List<BasicFriendView> GetFriends(string userID)

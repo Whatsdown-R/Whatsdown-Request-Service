@@ -60,7 +60,13 @@ namespace Whatsdown_Friend_Service
             friendContext.SaveChanges();
         }
 
-    
+        public void Remove(Relationship rel)
+        {
+            friendContext.Relationships.Remove(rel);
+            friendContext.SaveChangesAsync();
+        }
+
+
 
     }
 }
